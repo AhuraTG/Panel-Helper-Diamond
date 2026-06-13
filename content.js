@@ -959,6 +959,394 @@ lossBtn.click();
 
 }
 
+const remainingWithdrawBtn =
+document.getElementById(
+"diamond-remaining-withdraw-btn"
+);
+
+if(remainingWithdrawBtn){
+
+remainingWithdrawBtn.onclick = ()=>{
+
+diamondPanel.innerHTML = `
+
+<div style="
+color:#60a5fa;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+">
+💎 مابقی برداشت
+</div>
+
+<input
+id="diamond-remaining-input"
+type="text"
+placeholder="مبلغ مابقی برداشت"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#1f2937;
+color:white;
+border:none;
+border-radius:8px;
+box-sizing:border-box;
+">
+
+<button
+id="diamond-remaining-add"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+افزودن مبلغ
+</button>
+
+<div
+id="diamond-remaining-list"
+style="
+max-height:120px;
+overflow:auto;
+margin-bottom:8px;
+">
+</div>
+
+<div
+id="diamond-remaining-total"
+style="
+text-align:center;
+font-weight:bold;
+margin-bottom:8px;
+color:#22c55e;
+">
+مجموع: 0
+</div>
+
+<button
+id="diamond-remaining-save"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+ثبت مابقی برداشت
+</button>
+
+<button
+id="diamond-remaining-reset"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+ریست
+</button>
+
+<button
+id="diamond-remaining-back"
+style="
+width:100%;
+padding:10px;
+background:#374151;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+بازگشت
+</button>
+
+`;
+
+setTimeout(()=>{
+
+let remainingValues = [];
+
+const remainingInput =
+document.getElementById(
+"diamond-remaining-input"
+);
+
+remainingInput.addEventListener(
+"input",
+()=>{
+
+remainingInput.value =
+remainingInput.value.replace(
+/[^0-9,]/g,
+""
+);
+
+}
+);
+
+const remainingAddBtn =
+document.getElementById(
+"diamond-remaining-add"
+);
+
+const remainingList =
+document.getElementById(
+"diamond-remaining-list"
+);
+
+const remainingTotal =
+document.getElementById(
+"diamond-remaining-total"
+);
+
+const remainingSaveBtn =
+document.getElementById(
+"diamond-remaining-save"
+);
+
+const remainingResetBtn =
+document.getElementById(
+"diamond-remaining-reset"
+);
+
+const savedRemainingList =
+JSON.parse(
+localStorage.getItem(
+"diamond_remaining_withdraw_list"
+) || "[]"
+);
+
+if(savedRemainingList.length){
+
+remainingValues =
+savedRemainingList;
+
+savedRemainingList.forEach(value=>{
+
+remainingList.innerHTML +=
+`
+<div style="
+background:#1f2937;
+padding:6px;
+border-radius:6px;
+margin-bottom:4px;
+text-align:center;
+">
+${value.toLocaleString()}
+</div>
+`;
+
+});
+
+const total =
+remainingValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+remainingTotal.innerText =
+"مجموع: " +
+total.toLocaleString();
+
+remainingSaveBtn.style.background =
+"#15803d";
+
+remainingSaveBtn.innerText =
+"🟢 ثبت شد";
+
+}
+
+remainingSaveBtn.onclick = ()=>{
+
+const total =
+remainingValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+localStorage.setItem(
+"diamond_remaining_withdraw",
+total
+);
+
+localStorage.setItem(
+"diamond_remaining_withdraw_list",
+JSON.stringify(
+remainingValues
+)
+);
+
+remainingSaveBtn.style.background =
+"#15803d";
+
+remainingSaveBtn.innerText =
+"🟢 ثبت شد";
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"مجموع مابقی برداشت " +
+total.toLocaleString() +
+" تومان ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(
+successBox
+);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},3000);
+
+};
+
+remainingResetBtn.onclick = ()=>{
+
+remainingValues = [];
+
+remainingList.innerHTML = "";
+
+remainingTotal.innerText =
+"مجموع: 0";
+
+remainingInput.value = "";
+
+localStorage.removeItem(
+"diamond_remaining_withdraw"
+);
+
+localStorage.removeItem(
+"diamond_remaining_withdraw_list"
+);
+
+remainingSaveBtn.style.background =
+"#16a34a";
+
+remainingSaveBtn.innerText =
+"ثبت مابقی برداشت";
+
+};
+
+const remainingBackBtn =
+document.getElementById(
+"diamond-remaining-back"
+);
+
+if(remainingBackBtn){
+
+remainingBackBtn.onclick = ()=>{
+
+diamondPanel.remove();
+
+diamondPanel = null;
+
+createDiamondPanel();
+
+diamondPanel.style.display = "block";
+
+setTimeout(()=>{
+
+const lossBtn =
+document.getElementById(
+"diamond-loss-btn"
+);
+
+if(lossBtn){
+
+lossBtn.click();
+
+}
+
+},100);
+
+};
+
+}
+
+remainingAddBtn.onclick = ()=>{
+
+const value =
+parseInt(
+remainingInput.value.replaceAll(
+",",
+""
+)
+);
+
+if(isNaN(value)){
+
+return;
+
+}
+
+remainingValues.push(value);
+
+remainingList.innerHTML += `
+<div style="
+background:#1f2937;
+padding:6px;
+border-radius:6px;
+margin-bottom:4px;
+text-align:center;
+">
+${value.toLocaleString()}
+</div>
+`;
+
+const total =
+remainingValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+remainingTotal.innerText =
+"مجموع: " +
+total.toLocaleString();
+
+remainingInput.value = "";
+
+remainingSaveBtn.style.background =
+"#16a34a";
+
+remainingSaveBtn.innerText =
+"ثبت مابقی برداشت";
+
+};
+
+},50);
+
+};
+}
+
 const profileBtn =
 document.getElementById("diamond-profile-btn");
 
@@ -1108,6 +1496,14 @@ localStorage.removeItem(
 );
 
 localStorage.removeItem(
+"diamond_remaining_withdraw"
+);
+
+localStorage.removeItem(
+"diamond_remaining_withdraw_list"
+);
+
+localStorage.removeItem(
 "diamond_total_deposit"
 );
 
@@ -1202,6 +1598,21 @@ cashbackBtn.style.background =
 
 cashbackBtn.innerText =
 "🔴 کش بک دریافتی";
+
+}
+
+const remainingWithdrawBtn =
+document.getElementById(
+"diamond-remaining-withdraw-btn"
+);
+
+if(remainingWithdrawBtn){
+
+remainingWithdrawBtn.style.background =
+"#dc2626";
+
+remainingWithdrawBtn.innerText =
+"🔴 مابقی برداشت";
 
 }
 
@@ -1379,6 +1790,7 @@ font-weight:bold;
 </button>
 
 <button
+id="diamond-remaining-withdraw-btn"
 style="
 width:100%;
 padding:10px;
@@ -1509,6 +1921,26 @@ cashbackBtn.style.background =
 
 cashbackBtn.innerText =
 "🟢 کش بک ثبت شد";
+
+}
+
+const remainingWithdrawBtn =
+document.getElementById(
+"diamond-remaining-withdraw-btn"
+);
+
+if(
+remainingWithdrawBtn &&
+localStorage.getItem(
+"diamond_remaining_withdraw"
+) !== null
+){
+
+remainingWithdrawBtn.style.background =
+"#15803d";
+
+remainingWithdrawBtn.innerText =
+"🟢 مابقی برداشت ثبت شد";
 
 }
 
