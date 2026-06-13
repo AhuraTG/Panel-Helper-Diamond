@@ -1,450 +1,1148 @@
-(function () {
-  let activePanel = null;
+let diamondPanel = null;
 
-  // ===== W PANEL =====
-  (function () {
-    let panelVisible = false;
-    let selectedBet = null;
-    let lastCopiedNumber = "";
-    let textarea = null;
-    const requiredWords = ["Amount", "Card", "Saba", "Bank"];
+function createDiamondPanel(){
 
-    function createCircleButton({ label, bottom, bg }) {
-      const b = document.createElement("div");
-      Object.assign(b.style, {
-        position: "fixed",
-        left: "15px",
-        bottom,
-        width: "50px",
-        height: "50px",
-        borderRadius: "50%",
-        backgroundColor: bg,
-        color: "#000",
-        fontWeight: "bold",
-        fontSize: "24px",
-        display: "none",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        zIndex: "10001",
-        userSelect: "none",
-      });
-      b.innerText = label;
-      document.body.appendChild(b);
-      return b;
-    }
+if(diamondPanel) return;
 
-    const wButton = createCircleButton({ label: "W", bottom: "15px", bg: "gold" });
-    const panel = document.createElement("div");
+diamondPanel = document.createElement("div");
 
-    Object.assign(panel.style, {
-      position: "fixed",
-      left: "75px",
-      bottom: "15px",
-      width: "220px",
-      backgroundColor: "gold",
-      color: "#000",
-      borderRadius: "8px",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
-      padding: "12px",
-      fontSize: "12px",
-      display: "none",
-      zIndex: "10002",
-    });
+Object.assign(diamondPanel.style,{
+position:"fixed",
+left:"75px",
+bottom:"15px",
+width:"300px",
+background:"#111827",
+borderRadius:"12px",
+padding:"12px",
+boxShadow:"0 0 20px rgba(0,0,0,.5)",
+zIndex:"1000000",
+display:"none"
+});
 
-    document.body.append(panel);
-    window.wPanelInstance = panel;
+diamondPanel.innerHTML = `
 
-    function getFieldValue(label) {
-      const fields = Array.from(document.querySelectorAll(".field_name"));
-      for (const f of fields) {
-        if (f.innerText.includes(label)) {
-          const next = f.nextElementSibling;
-          return next ? next.innerText.trim() || next.value || "" : "";
-        }
-      }
-      return "";
-    }
+<div style="
+color:#60a5fa;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+">
+💎 Diamond
+</div>
 
-    document.addEventListener("copy", () => {
-      const sel = window.getSelection().toString().trim();
-      if (/^\d+(\.\d+)?$/.test(sel)) {
-        localStorage.setItem("LAST_COPIED_NUMBER", sel);
-      }
-    });
+<button id="diamond-settings-btn" style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#6d28d9;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+تنظیمات فرم درصد باخت
+</button>
 
-    function renderBetOptions() {
-      panel.innerHTML = "";
-      if (!selectedBet) {
-        ["JET BET", "ACE BET"].forEach((t) => {
-          const btn = document.createElement("button");
-          btn.innerText = t;
-          Object.assign(btn.style, {
-            width: "100%",
-            marginBottom: "6px",
-            padding: "6px",
-            cursor: "pointer",
-            backgroundColor: "#0fa34a",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            fontWeight: "bold",
-            fontSize: "14px",
-          });
-          btn.onclick = () => {
-            selectedBet = t.split(" ")[0];
-            updateTextarea();
-          };
-          panel.appendChild(btn);
-        });
-      }
-    }
+<button id="diamond-loss-btn" style="
+width:100%;
+padding:10px;
+background:#8b5cf6;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+بررسی درصد باخت
+</button>
 
-    function updateTextarea() {
-      panel.innerHTML = "";
-      lastCopiedNumber = localStorage.getItem("LAST_COPIED_NUMBER") || "";
+`;
 
-      if (!selectedBet) {
-        renderBetOptions();
-        return;
-      }
+document.body.appendChild(diamondPanel);
+setTimeout(()=>{
+const settingsBtn =
+document.getElementById("diamond-settings-btn");
 
-      textarea = document.createElement("textarea");
-      textarea.readOnly = true;
-      Object.assign(textarea.style, {
-        width: "100%",
-        height: "190px",
-        padding: "6px",
-        fontSize: "16px",
-        borderRadius: "6px",
-        resize: "none",
-        backgroundColor: "#fff",
-        color: "#000",
-        marginBottom: "6px",
-      });
+if(settingsBtn){
 
-      textarea.value = [
-        `P. ${selectedBet}`,
-        `U. ${lastCopiedNumber}`,
-        `ID. ${getFieldValue("Id")}`,
-        `$. ${getFieldValue("Amount")}`,
-        `Z. ${getFieldValue("Process Time")}`,
-        `${getFieldValue("Card")}`,
-        `N. ${getFieldValue("Name")}`,
-        `G. ${getFieldValue("gateway")}`,
-      ].join("\n");
+settingsBtn.onclick = ()=>{
 
-      panel.appendChild(textarea);
+diamondPanel.innerHTML = `
 
-      const copyBtn = document.createElement("button");
-      copyBtn.innerText = "Copy";
-      Object.assign(copyBtn.style, {
-        width: "100%",
-        padding: "6px",
-        cursor: "pointer",
-        backgroundColor: "#0fa34a",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        fontWeight: "bold",
-        fontSize: "14px",
-      });
-      copyBtn.onclick = async () => {
-        await navigator.clipboard.writeText(textarea.value);
-        copyBtn.innerText = "Copied!";
-        setTimeout(() => (copyBtn.innerText = "Copy"), 2000);
-      };
-      panel.appendChild(copyBtn);
-    }
+<div style="
+color:#60a5fa;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+">
+💎 Diamond
+</div>
 
-    wButton.onclick = () => {
-      // بستن پنل $ اگر باز است
-      if (window.dollarPanelInstance && window.dollarPanelInstance.style.display === "block") {
-        window.dollarPanelInstance.style.display = "none";
-      }
+<div style="
+color:white;
+margin-bottom:4px;
+">
+انتخاب پنل
+</div>
 
-      if (panel.style.display === "block") {
-        panel.style.display = "none";
-        activePanel = null;
-        return;
-      }
-      panel.style.display = "block";
-      activePanel = "W";
-      selectedBet = null;
-      renderBetOptions();
-    };
+<select
+id="diamond-panel-select"
+style="
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:6px;
+">
 
-    function checkWords() {
-      const text = document.body.innerText;
-      const ok = requiredWords.every((w) => text.includes(w));
-      wButton.style.display = ok ? "flex" : "none";
-      if (!ok) {
-        panel.style.display = "none";
-        activePanel = null;
-      }
-    }
+<option>JET BET</option>
+<option>ACE BET</option>
 
-    new MutationObserver(checkWords).observe(document.body, { childList: true, subtree: true });
-    checkWords();
-  })();
+</select>
 
-  // ===== $ PANEL =====
-  (function () {
-    let dollarView = "HOME";
-    const RATE_KEY = "DOLLAR_RATES";
-    const defaultRates = { USDT: 0, TRON: 0, UTOPIA: 0, BEP20: 0 };
+<div style="
+color:white;
+margin-bottom:4px;
+">
+بررسی از تاریخ
+</div>
 
-    function getRates() {
-      return JSON.parse(localStorage.getItem(RATE_KEY)) || { ...defaultRates };
-    }
+<input
+id="diamond-date-from"
+type="date"
+style="
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:6px;
+">
 
-    function setRates(rates) {
-      localStorage.setItem(RATE_KEY, JSON.stringify(rates));
-    }
+<div style="
+color:white;
+margin-bottom:4px;
+">
+بررسی تا تاریخ
+</div>
 
-    function formatNumber(n) {
-      return Number(n || 0).toLocaleString("en-US");
-    }
+<input
+id="diamond-date-to"
+type="date"
+style="
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:6px;
+">
 
-    function createCircleButton({ label, bottom, bg }) {
-      const b = document.createElement("div");
-      Object.assign(b.style, {
-        position: "fixed",
-        left: "15px",
-        bottom,
-        width: "50px",
-        height: "50px",
-        borderRadius: "50%",
-        backgroundColor: bg,
-        color: "#000",
-        fontWeight: "bold",
-        fontSize: "24px",
-        display: "none",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        zIndex: "10001",
-        userSelect: "none",
-      });
-      b.innerText = label;
-      document.body.appendChild(b);
-      return b;
-    }
+<div style="
+color:white;
+margin-bottom:4px;
+">
+انتخاب ماه میلادی
+</div>
 
-    const dollarButton = createCircleButton({ label: "$", bottom: "75px", bg: "#3a8f3a" });
-    const dollarPanel = document.createElement("div");
-    window.dollarPanelInstance = dollarPanel;
+<select
+id="diamond-month"
+style="
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:6px;
+">
 
-    Object.assign(dollarPanel.style, {
-      position: "fixed",
-      left: "75px",
-      bottom: "75px",
-      width: "220px",
-      backgroundColor: "#3a8f3a",
-      color: "#000",
-      borderRadius: "8px",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
-      padding: "12px",
-      fontSize: "12px",
-      display: "none",
-      zIndex: "10002",
-    });
+<option>January</option>
+<option>February</option>
+<option>March</option>
+<option>April</option>
+<option>May</option>
+<option>June</option>
+<option>July</option>
+<option>August</option>
+<option>September</option>
+<option>October</option>
+<option>November</option>
+<option>December</option>
 
-    document.body.append(dollarPanel);
+</select>
 
-    function dollarBtnStyle() {
-      return {
-        width: "100%",
-        marginBottom: "8px",
-        padding: "8px",
-        background: "#2f6f2f",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        fontWeight: "bold",
-        cursor: "pointer",
-      };
-    }
+<button
+id="diamond-save-settings"
+style="
+width:100%;
+padding:10px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+ذخیره تنظیمات
+</button>
 
-    function inputStyle() {
-      return {
-        width: "100%",
-        padding: "6px",
-        marginBottom: "8px",
-        borderRadius: "4px",
-        border: "1px solid #ccc",
-        fontSize: "14px",
-      };
-    }
+`;
 
-    function backBtn() {
-      const b = document.createElement("button");
-      b.innerText = "بازگشت";
-      Object.assign(b.style, {
-        width: "100%",
-        padding: "8px",
-        background: "#c0392b",
-        color: "#fff",
-        border: "none",
-        borderRadius: "4px",
-        fontWeight: "bold",
-        cursor: "pointer",
-      });
-      b.onclick = () => {
-        dollarView = "HOME";
-        renderDollar();
-      };
-      dollarPanel.appendChild(b);
-    }
+setTimeout(()=>{
 
-    function renderDollarHome() {
-      dollarPanel.innerHTML = "";
-      ["بروز رسانی قیمت ارز", "استعلام مقدار واریزی"].forEach((t, i) => {
-        const b = document.createElement("button");
-        b.innerText = t;
-        Object.assign(b.style, dollarBtnStyle());
-        b.onclick = () => {
-          dollarView = i === 0 ? "UPDATE" : "CHECK";
-          renderDollar();
-        };
-        dollarPanel.appendChild(b);
-      });
-    }
+const saveBtn =
+document.getElementById("diamond-save-settings");
 
-    function renderUpdate() {
-      dollarPanel.innerHTML = "";
-      const rates = getRates();
+if(saveBtn){
 
-      Object.keys(rates).forEach((k) => {
-        const l = document.createElement("div");
-        l.innerText = k;
-        l.style.fontWeight = "bold";
-        l.style.marginBottom = "4px";
-        dollarPanel.appendChild(l);
+saveBtn.onclick = ()=>{
 
-        const i = document.createElement("input");
-        i.type = "text";
-        i.value = formatNumber(rates[k]);
-        Object.assign(i.style, inputStyle());
+const dateFrom =
+document.getElementById("diamond-date-from").value;
 
-        i.oninput = () => {
-          const raw = i.value.replace(/,/g, "").replace(/\D/g, "");
-          rates[k] = Number(raw || 0);
-          i.value = formatNumber(raw);
-        };
+const dateTo =
+document.getElementById("diamond-date-to").value;
 
-        dollarPanel.appendChild(i);
-      });
+if(!dateFrom || !dateTo){
 
-      const save = document.createElement("button");
-      save.innerText = "ثبت بروز رسانی";
-      Object.assign(save.style, dollarBtnStyle());
-      save.onclick = () => {
-        setRates(rates);
-        alert("قیمت‌ها ذخیره شد");
-      };
-      dollarPanel.appendChild(save);
+const errorBox =
+document.createElement("div");
 
-      backBtn();
-    }
+errorBox.innerText =
+"تاریخ ها را انتخاب کنید";
 
-    function renderCheck() {
-      dollarPanel.innerHTML = "";
-      let rates = getRates();
+Object.assign(errorBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#dc2626",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
 
-      const labelStyle = {
-        color: "#000",
-        fontWeight: "bold",
-        fontSize: "15px",
-        margin: "8px 0",
-      };
+document.body.appendChild(errorBox);
 
-      const lbl1 = document.createElement("div");
-      lbl1.innerText = "* ارز مورد نظر را انتخاب کنید";
-      Object.assign(lbl1.style, labelStyle);
-      dollarPanel.appendChild(lbl1);
+setTimeout(()=>{
 
-      const sel = document.createElement("select");
-      Object.assign(sel.style, inputStyle());
-      Object.keys(rates).forEach((k) => {
-        const o = document.createElement("option");
-        o.value = k;
-        o.innerText = k;
-        sel.appendChild(o);
-      });
-      dollarPanel.appendChild(sel);
+errorBox.remove();
 
-      const lbl2 = document.createElement("div");
-      lbl2.innerText = "* مقدار ارز واریزی را بنویسید";
-      Object.assign(lbl2.style, labelStyle);
-      dollarPanel.appendChild(lbl2);
+},2000);
 
-      const inp = document.createElement("input");
-      inp.type = "text";
-      Object.assign(inp.style, inputStyle());
-      dollarPanel.appendChild(inp);
+return;
 
-      const res = document.createElement("div");
-      Object.assign(res.style, {
-        marginTop: "14px",
-        marginBottom: "16px",
-        fontSize: "16px",
-        fontWeight: "bold",
-      });
-      dollarPanel.appendChild(res);
+}
 
-      function recalc() {
-        rates = getRates();
-        const amount = Number(inp.value.replace(/,/g, "") || 0);
-        const rate = rates[sel.value] || 0;
-        res.innerText = amount
-          ? `مقدار واریزی کاربر ${formatNumber(amount * rate)} تومان می باشد`
-          : "";
-      }
+localStorage.setItem(
+"diamond_panel",
+document.getElementById("diamond-panel-select").value
+);
 
-      inp.oninput = () => {
-        const raw = inp.value.replace(/,/g, "").replace(/\D/g, "");
-        inp.value = formatNumber(raw);
-        recalc();
-      };
+localStorage.setItem(
+"diamond_date_from",
+dateFrom
+);
 
-      sel.onchange = recalc;
+localStorage.setItem(
+"diamond_date_to",
+dateTo
+);
 
-      backBtn();
-    }
+localStorage.setItem(
+"diamond_month",
+document.getElementById("diamond-month").value
+);
 
-    function renderDollar() {
-      if (dollarView === "HOME") renderDollarHome();
-      if (dollarView === "UPDATE") renderUpdate();
-      if (dollarView === "CHECK") renderCheck();
-    }
+const successBox =
+document.createElement("div");
 
-    function checkDollarWords() {
-      const text = document.body.innerText;
-      const requiredWords = ["Amount", "Card", "Saba", "Bank"];
-      const ok = requiredWords.every((w) => text.includes(w));
-      dollarButton.style.display = ok ? "flex" : "none";
-      if (!ok) dollarPanel.style.display = "none";
-    }
+successBox.innerText =
+"تنظیمات ذخیره شد";
 
-    new MutationObserver(checkDollarWords).observe(document.body, { childList: true, subtree: true });
-    checkDollarWords();
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
 
-    dollarButton.onclick = () => {
-      // بستن پنل W اگر باز است
-      if (window.wPanelInstance && window.wPanelInstance.style.display === "block") {
-        window.wPanelInstance.style.display = "none";
-      }
+document.body.appendChild(successBox);
 
-      if (dollarPanel.style.display === "block") {
-        dollarPanel.style.display = "none";
-        activePanel = null;
-        return;
-      }
-      dollarPanel.style.display = "block";
-      activePanel = "$";
-      dollarView = "HOME";
-      renderDollar();
-    };
-  })();
-})();
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
+
+diamondPanel.remove();
+
+diamondPanel = null;
+
+createDiamondPanel();
+
+diamondPanel.style.display = "block";
+
+};
+}
+
+},50);
+
+};
+
+}
+
+const lossBtn =
+document.getElementById("diamond-loss-btn");
+
+if(lossBtn){
+
+lossBtn.onclick = ()=>{
+
+showLossMenu();
+
+setTimeout(()=>{
+
+const affBtn =
+document.getElementById("diamond-aff-btn");
+
+if(affBtn){
+
+affBtn.onclick = ()=>{
+
+const affName =
+document.getElementById("diamond-aff-name").value.trim();
+
+if(!affName){
+
+return;
+
+}
+
+affBtn.style.background =
+"#16a34a";
+
+affBtn.innerText =
+"ثبت شد";
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"افلیت کاربر ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(successBox);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
+
+};
+
+}
+
+},50);
+
+setTimeout(()=>{
+
+const depositBtn =
+document.getElementById("diamond-deposit-btn");
+
+if(depositBtn){
+
+depositBtn.onclick = ()=>{
+
+const depositTag =
+[...document.querySelectorAll("span")]
+.find(el =>
+el.textContent.trim() === "Deposit"
+);
+
+if(!depositTag){
+
+const errorBox =
+document.createElement("div");
+
+errorBox.innerText =
+"وارد واریزی های کاربر شوید";
+
+Object.assign(errorBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#dc2626",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(errorBox);
+
+setTimeout(()=>{
+
+errorBox.remove();
+
+},2000);
+
+return;
+
+}
+
+const totalDeposit =
+document.querySelector(
+"body > div.full_absolute > div.main_container > div.main_content > div.xw.mt15.mb15.p15.form_container > div.data_table_footer > div.right.right_align"
+)?.innerText.trim();
+
+if(!totalDeposit){
+
+return;
+
+}
+
+localStorage.setItem(
+"diamond_total_deposit",
+totalDeposit
+);
+
+depositBtn.style.background =
+"#16a34a";
+
+depositBtn.innerText =
+"🟢 واریزی ثبت شد";
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"مقدار واریزی " +
+totalDeposit +
+" ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(successBox);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
+
+};
+
+}
+
+},50);
+
+setTimeout(()=>{
+
+const withdrawBtn =
+document.getElementById("diamond-withdraw-btn");
+
+if(withdrawBtn){
+
+withdrawBtn.onclick = ()=>{
+
+const successTag =
+[...document.querySelectorAll("span")]
+.find(el =>
+el.textContent.trim() === "Success"
+);
+
+if(!successTag){
+
+const errorBox =
+document.createElement("div");
+
+errorBox.innerText =
+"وارد برداشت های کاربر شوید";
+
+Object.assign(errorBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#dc2626",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(errorBox);
+
+setTimeout(()=>{
+
+errorBox.remove();
+
+},2000);
+
+return;
+
+}
+
+const totalWithdraw =
+document.querySelector(
+"body > div.full_absolute > div.main_container > div.main_content > div.xw.mt15.mb15.p15.form_container > div.data_table_footer > div:nth-child(2)"
+)?.innerText.trim();
+
+if(!totalWithdraw){
+
+return;
+
+}
+
+localStorage.setItem(
+"diamond_total_withdraw",
+totalWithdraw
+);
+
+withdrawBtn.style.background =
+"#16a34a";
+
+withdrawBtn.innerText =
+"🟢 برداشت ثبت شد";
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"مقدار برداشت " +
+totalWithdraw +
+" ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(successBox);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
+
+};
+
+}
+
+const cashbackBtn =
+document.getElementById("diamond-cashback-btn");
+
+if(cashbackBtn){
+
+cashbackBtn.onclick = ()=>{
+
+diamondPanel.innerHTML = `
+
+<div style="
+color:#60a5fa;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+">
+💎 کش بک دریافتی
+</div>
+
+<button
+id="diamond-cashback-back"
+style="
+width:100%;
+padding:10px;
+background:#374151;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+بازگشت
+</button>
+
+`;
+
+setTimeout(()=>{
+
+const cashbackBackBtn =
+document.getElementById("diamond-cashback-back");
+
+if(cashbackBackBtn){
+
+cashbackBackBtn.onclick = ()=>{
+
+diamondPanel.remove();
+
+diamondPanel = null;
+
+createDiamondPanel();
+
+diamondPanel.style.display = "block";
+
+setTimeout(()=>{
+
+const lossBtn =
+document.getElementById("diamond-loss-btn");
+
+if(lossBtn){
+
+lossBtn.click();
+
+}
+
+},100);
+
+};
+
+}
+
+},50);
+
+};
+
+}
+
+const profileBtn =
+document.getElementById("diamond-profile-btn");
+
+if(profileBtn){
+
+profileBtn.onclick = ()=>{
+
+const userInput =
+document.getElementById("id");
+
+if(!userInput){
+
+const errorBox =
+document.createElement("div");
+
+errorBox.innerText =
+"وارد پروفایل کاربر مورد نظر شوید";
+
+Object.assign(errorBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#dc2626",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(errorBox);
+
+setTimeout(()=>{
+
+errorBox.remove();
+
+},2000);
+
+return;
+
+}
+
+const userId =
+userInput.value;
+
+const userName =
+document.getElementById("name")?.value || "";
+
+console.log(
+document.querySelectorAll(".holder")
+);
+
+localStorage.setItem(
+"diamond_user_id",
+userId
+);
+
+localStorage.setItem(
+"diamond_user_name",
+userName
+);
+
+profileBtn.style.background =
+"#16a34a";
+
+profileBtn.innerText =
+"🟢 پروفایل ثبت شد";
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"پروفایل کاربر با یوزر " +
+userId +
+" ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(successBox);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
+
+};
+
+}
+
+},50);
+
+setTimeout(()=>{
+
+const backBtn =
+document.getElementById("diamond-back-btn");
+
+if(backBtn){
+
+backBtn.onclick = ()=>{
+
+diamondPanel.remove();
+
+diamondPanel = null;
+
+createDiamondPanel();
+
+diamondPanel.style.display = "block";
+
+};
+
+}
+
+},50);
+
+setTimeout(()=>{
+
+const newUserBtn =
+document.getElementById("diamond-new-user-btn");
+
+if(newUserBtn){
+
+newUserBtn.onclick = ()=>{
+
+localStorage.removeItem(
+"diamond_aff_name"
+);
+
+document.getElementById(
+"diamond-aff-name"
+).value = "";
+
+const affBtn =
+document.getElementById("diamond-aff-btn");
+
+if(affBtn){
+
+affBtn.style.background =
+"#dc2626";
+
+affBtn.innerText =
+"ثبت افلیت";
+
+}
+
+const profileBtn =
+document.getElementById("diamond-profile-btn");
+
+if(profileBtn){
+
+profileBtn.style.background =
+"#dc2626";
+
+profileBtn.innerText =
+"🔴 ثبت پروفایل کاربر";
+
+}
+
+const withdrawBtn =
+document.getElementById("diamond-withdraw-btn");
+
+if(withdrawBtn){
+
+withdrawBtn.style.background =
+"#dc2626";
+
+withdrawBtn.innerText =
+"🔴 ثبت مقدار برداشت";
+
+}
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"اطلاعات کاربر قبلی پاک شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(successBox);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
+
+};
+
+}
+
+},50);
+
+};
+
+}
+
+},100);
+}
+
+function showLossMenu(){
+
+diamondPanel.innerHTML = `
+
+<div style="
+color:#60a5fa;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+">
+💎 Diamond
+</div>
+
+<div style="
+display:flex;
+gap:6px;
+margin-bottom:10px;
+">
+
+<input
+id="diamond-aff-name"
+placeholder="Aff Name"
+style="
+flex:1;
+padding:8px;
+border-radius:6px;
+border:none;
+">
+
+<button
+id="diamond-aff-btn"
+style="
+width:70px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-size:12px;
+">
+ثبت افلیت
+</button>
+
+</div>
+
+<button
+id="diamond-profile-btn"
+style="
+width:100%;
+padding:10px;
+margin-bottom:6px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+🔴 ثبت پروفایل کاربر
+</button>
+
+<button
+id="diamond-deposit-btn"
+style="
+width:100%;
+padding:10px;
+margin-bottom:6px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+🔴 ثبت مقدار واریزی
+</button>
+
+<button
+id="diamond-withdraw-btn"
+style="
+width:100%;
+padding:10px;
+margin-bottom:6px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+🔴 ثبت مقدار برداشت
+</button>
+
+<button
+id="diamond-cashback-btn"
+style="
+width:100%;
+padding:10px;
+margin-bottom:6px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+🔴 کش بک دریافتی
+</button>
+
+<button
+style="
+width:100%;
+padding:10px;
+margin-bottom:6px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+🔴 مابقی برداشت
+</button>
+
+<button
+style="
+width:100%;
+padding:10px;
+margin-bottom:10px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+🔴 شارژ دستی
+</button>
+
+<button
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+کپی فرم درصد باخت این کاربر
+</button>
+
+<button
+id="diamond-new-user-btn"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#f59e0b;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+بررسی کاربر جدید
+</button>
+
+<button
+id="diamond-back-btn"
+style="
+width:100%;
+padding:10px;
+background:#374151;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+بازگشت
+</button>
+
+`;
+
+}
+
+function toggleDiamondPanel(){
+
+createDiamondPanel();
+
+if(diamondPanel.style.display === "none"){
+
+diamondPanel.style.display = "block";
+
+}else{
+
+diamondPanel.style.display = "none";
+
+}
+
+}
+
+function createDiamondButton(){
+
+if(document.getElementById("diamond-helper-btn")) return;
+
+const btn = document.createElement("div");
+
+btn.id = "diamond-helper-btn";
+
+btn.innerText = "💎";
+
+Object.assign(btn.style,{
+position:"fixed",
+left:"15px",
+bottom:"15px",
+width:"50px",
+height:"50px",
+borderRadius:"50%",
+background:"#2563eb",
+color:"#fff",
+fontSize:"24px",
+fontWeight:"bold",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+cursor:"pointer",
+zIndex:"999999",
+boxShadow:"0 0 15px rgba(37,99,235,.8)"
+});
+
+document.body.appendChild(btn);
+
+btn.onclick = ()=>{
+
+toggleDiamondPanel();
+
+};
+
+}
+
+function removeDiamondButton(){
+
+const btn = document.getElementById("diamond-helper-btn");
+
+if(btn) btn.remove();
+
+if(diamondPanel){
+
+diamondPanel.remove();
+
+diamondPanel = null;
+
+}
+
+}
+
+function checkState(){
+
+chrome.storage.local.get(["diamondEnabled"],(result)=>{
+
+if(result.diamondEnabled === true){
+
+createDiamondButton();
+
+}else{
+
+removeDiamondButton();
+
+}
+
+});
+
+}
+
+chrome.storage.local.set({
+diamondEnabled:false
+});
+
+checkState();
+
+setInterval(checkState,1000);
