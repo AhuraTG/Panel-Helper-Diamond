@@ -1248,6 +1248,14 @@ localStorage.removeItem(
 "diamond_remaining_withdraw_list"
 );
 
+localStorage.removeItem(
+"diamond_manual_charge"
+);
+
+localStorage.removeItem(
+"diamond_manual_charge_list"
+);
+
 remainingSaveBtn.style.background =
 "#16a34a";
 
@@ -1345,6 +1353,395 @@ remainingSaveBtn.innerText =
 },50);
 
 };
+}
+
+const manualChargeBtn =
+document.getElementById(
+"diamond-manual-charge-btn"
+);
+
+if(manualChargeBtn){
+
+manualChargeBtn.onclick = ()=>{
+
+diamondPanel.innerHTML = `
+
+<div style="
+color:#60a5fa;
+font-size:18px;
+font-weight:bold;
+text-align:center;
+margin-bottom:10px;
+">
+💎 شارژ دستی
+</div>
+
+<input
+id="diamond-manual-input"
+type="text"
+placeholder="مبلغ شارژ دستی"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#1f2937;
+color:white;
+border:none;
+border-radius:8px;
+box-sizing:border-box;
+">
+
+<button
+id="diamond-manual-add"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+افزودن مبلغ
+</button>
+
+<div
+id="diamond-manual-list"
+style="
+max-height:120px;
+overflow:auto;
+margin-bottom:8px;
+">
+</div>
+
+<div
+id="diamond-manual-total"
+style="
+text-align:center;
+font-weight:bold;
+margin-bottom:8px;
+color:#22c55e;
+">
+مجموع: 0
+</div>
+
+<button
+id="diamond-manual-save"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+ثبت شارژ دستی
+</button>
+
+<button
+id="diamond-manual-reset"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+ریست
+</button>
+
+<button
+id="diamond-manual-back"
+style="
+width:100%;
+padding:10px;
+background:#374151;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+بازگشت
+</button>
+
+`;
+
+setTimeout(()=>{
+
+let manualValues = [];
+
+const manualInput =
+document.getElementById(
+"diamond-manual-input"
+);
+
+manualInput.addEventListener(
+"input",
+()=>{
+
+manualInput.value =
+manualInput.value.replace(
+/[^0-9,]/g,
+""
+);
+
+}
+);
+
+const manualAddBtn =
+document.getElementById(
+"diamond-manual-add"
+);
+
+const manualList =
+document.getElementById(
+"diamond-manual-list"
+);
+
+const manualTotal =
+document.getElementById(
+"diamond-manual-total"
+);
+
+const manualSaveBtn =
+document.getElementById(
+"diamond-manual-save"
+);
+
+const manualResetBtn =
+document.getElementById(
+"diamond-manual-reset"
+);
+
+const manualBackBtn =
+document.getElementById(
+"diamond-manual-back"
+);
+
+const savedManualList =
+JSON.parse(
+localStorage.getItem(
+"diamond_manual_charge_list"
+) || "[]"
+);
+
+if(savedManualList.length){
+
+manualValues =
+savedManualList;
+
+savedManualList.forEach(value=>{
+
+manualList.innerHTML +=
+`
+<div style="
+background:#1f2937;
+padding:6px;
+border-radius:6px;
+margin-bottom:4px;
+text-align:center;
+">
+${value.toLocaleString()}
+</div>
+`;
+
+});
+
+const total =
+manualValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+manualTotal.innerText =
+"مجموع: " +
+total.toLocaleString();
+
+manualSaveBtn.style.background =
+"#15803d";
+
+manualSaveBtn.innerText =
+"🟢 ثبت شد";
+
+}
+
+manualSaveBtn.onclick = ()=>{
+
+const total =
+manualValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+localStorage.setItem(
+"diamond_manual_charge",
+total
+);
+
+localStorage.setItem(
+"diamond_manual_charge_list",
+JSON.stringify(
+manualValues
+)
+);
+
+manualSaveBtn.style.background =
+"#15803d";
+
+manualSaveBtn.innerText =
+"🟢 ثبت شد";
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"مجموع شارژ دستی " +
+total.toLocaleString() +
+" تومان ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(
+successBox
+);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},3000);
+
+};
+
+manualResetBtn.onclick = ()=>{
+
+manualValues = [];
+
+manualList.innerHTML = "";
+
+manualTotal.innerText =
+"مجموع: 0";
+
+manualInput.value = "";
+
+localStorage.removeItem(
+"diamond_manual_charge"
+);
+
+localStorage.removeItem(
+"diamond_manual_charge_list"
+);
+
+manualSaveBtn.style.background =
+"#16a34a";
+
+manualSaveBtn.innerText =
+"ثبت شارژ دستی";
+
+};
+
+if(manualBackBtn){
+
+manualBackBtn.onclick = ()=>{
+
+diamondPanel.remove();
+
+diamondPanel = null;
+
+createDiamondPanel();
+
+diamondPanel.style.display = "block";
+
+setTimeout(()=>{
+
+const lossBtn =
+document.getElementById(
+"diamond-loss-btn"
+);
+
+if(lossBtn){
+
+lossBtn.click();
+
+}
+
+},100);
+
+};
+
+}
+
+manualAddBtn.onclick = ()=>{
+
+const value =
+parseInt(
+manualInput.value.replaceAll(
+",",
+""
+)
+);
+
+if(isNaN(value)){
+
+return;
+
+}
+
+manualValues.push(value);
+
+manualList.innerHTML += `
+<div style="
+background:#1f2937;
+padding:6px;
+border-radius:6px;
+margin-bottom:4px;
+text-align:center;
+">
+${value.toLocaleString()}
+</div>
+`;
+
+const total =
+manualValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+manualTotal.innerText =
+"مجموع: " +
+total.toLocaleString();
+
+manualInput.value = "";
+
+manualSaveBtn.style.background =
+"#16a34a";
+
+manualSaveBtn.innerText =
+"ثبت شارژ دستی";
+
+};
+
+},50);
+
+};
+
 }
 
 const profileBtn =
@@ -1616,6 +2013,21 @@ remainingWithdrawBtn.innerText =
 
 }
 
+const manualChargeBtn =
+document.getElementById(
+"diamond-manual-charge-btn"
+);
+
+if(manualChargeBtn){
+
+manualChargeBtn.style.background =
+"#dc2626";
+
+manualChargeBtn.innerText =
+"🔴 شارژ دستی";
+
+}
+
 if(withdrawBtn){
 
 withdrawBtn.style.background =
@@ -1805,6 +2217,7 @@ font-weight:bold;
 </button>
 
 <button
+id="diamond-manual-charge-btn"
 style="
 width:100%;
 padding:10px;
@@ -1941,6 +2354,26 @@ remainingWithdrawBtn.style.background =
 
 remainingWithdrawBtn.innerText =
 "🟢 مابقی برداشت ثبت شد";
+
+}
+
+const manualChargeBtn =
+document.getElementById(
+"diamond-manual-charge-btn"
+);
+
+if(
+manualChargeBtn &&
+localStorage.getItem(
+"diamond_manual_charge"
+) !== null
+){
+
+manualChargeBtn.style.background =
+"#15803d";
+
+manualChargeBtn.innerText =
+"🟢 شارژ دستی ثبت شد";
 
 }
 
