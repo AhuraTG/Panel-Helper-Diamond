@@ -842,6 +842,37 @@ cashbackSaveBtn.style.background =
 cashbackSaveBtn.innerText =
 "🟢 ثبت شد";
 
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"مجموع کش بک دریافتی " +
+total.toLocaleString() +
+" تومان ثبت شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"9999999"
+});
+
+document.body.appendChild(
+successBox
+);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},3000);
+
 };
 
 
