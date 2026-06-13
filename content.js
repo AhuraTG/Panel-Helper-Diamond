@@ -1793,6 +1793,44 @@ userInput.value;
 const userName =
 document.getElementById("name")?.value || "";
 
+const holders =
+document.querySelectorAll(".holder");
+
+let totalDeposit = "";
+let totalWithdraw = "";
+let systemProfit = "";
+
+holders.forEach(holder=>{
+
+const caption =
+holder.querySelector(".caption")
+?.innerText
+?.trim();
+
+const value =
+holder.querySelector("input")
+?.value || "";
+
+if(caption === "Deposit:"){
+
+totalDeposit = value;
+
+}
+
+if(caption === "Withdraw:"){
+
+totalWithdraw = value;
+
+}
+
+if(caption === "System Profit:"){
+
+systemProfit = value;
+
+}
+
+});
+
 console.log(
 document.querySelectorAll(".holder")
 );
@@ -1805,6 +1843,21 @@ userId
 localStorage.setItem(
 "diamond_user_name",
 userName
+);
+
+localStorage.setItem(
+"diamond_profile_total_deposit",
+totalDeposit
+);
+
+localStorage.setItem(
+"diamond_profile_total_withdraw",
+totalWithdraw
+);
+
+localStorage.setItem(
+"diamond_profile_system_profit",
+systemProfit
 );
 
 profileBtn.style.background =
@@ -1914,6 +1967,18 @@ localStorage.removeItem(
 
 localStorage.removeItem(
 "diamond_user_name"
+);
+
+localStorage.removeItem(
+"diamond_profile_total_deposit"
+);
+
+localStorage.removeItem(
+"diamond_profile_total_withdraw"
+);
+
+localStorage.removeItem(
+"diamond_profile_system_profit"
 );
 
 document.getElementById(
