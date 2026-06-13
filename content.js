@@ -588,6 +588,83 @@ margin-bottom:10px;
 💎 کش بک دریافتی
 </div>
 
+<input
+id="diamond-cashback-input"
+type="text"
+placeholder="مبلغ کش بک"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#1f2937;
+color:white;
+border:none;
+border-radius:8px;
+box-sizing:border-box;
+">
+
+<button
+id="diamond-cashback-add"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+افزودن مبلغ </button>
+
+<div
+id="diamond-cashback-list"
+style="
+max-height:120px;
+overflow:auto;
+margin-bottom:8px;
+">
+</div>
+
+<div
+id="diamond-cashback-total"
+style="
+text-align:center;
+font-weight:bold;
+margin-bottom:8px;
+color:#22c55e;
+">
+مجموع: 0
+</div>
+
+<button
+id="diamond-cashback-save"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#16a34a;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+ثبت کش بک </button>
+
+<button
+id="diamond-cashback-reset"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+ریست </button>
+
 <button
 id="diamond-cashback-back"
 style="
@@ -599,15 +676,121 @@ border:none;
 border-radius:8px;
 font-weight:bold;
 ">
-بازگشت
-</button>
+بازگشت </button>
 
 `;
+
 
 setTimeout(()=>{
 
 const cashbackBackBtn =
 document.getElementById("diamond-cashback-back");
+
+let cashbackValues = [];
+
+
+const cashbackInput =
+document.getElementById("diamond-cashback-input");
+
+cashbackInput.addEventListener("input",()=>{
+
+cashbackInput.value =
+cashbackInput.value.replace(
+/[^0-9,]/g,
+""
+);
+
+});
+
+const cashbackAddBtn =
+document.getElementById("diamond-cashback-add");
+
+const cashbackList =
+document.getElementById("diamond-cashback-list");
+
+const cashbackTotal =
+document.getElementById("diamond-cashback-total");
+
+const cashbackSaveBtn =
+document.getElementById("diamond-cashback-save");
+
+const cashbackResetBtn =
+document.getElementById("diamond-cashback-reset");
+
+cashbackSaveBtn.onclick = ()=>{
+
+const total =
+cashbackValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+localStorage.setItem(
+"diamond_cashback",
+total
+);
+
+localStorage.setItem(
+"diamond_cashback_list",
+JSON.stringify(cashbackValues)
+);
+
+cashbackSaveBtn.style.background =
+"#15803d";
+
+cashbackSaveBtn.innerText =
+"🟢 ثبت شد";
+
+};
+
+
+cashbackAddBtn.onclick = ()=>{
+
+const value =
+parseInt(
+cashbackInput.value.replaceAll(",","")
+);
+
+if(isNaN(value)){
+
+return;
+
+}
+
+cashbackValues.push(value);
+
+cashbackList.innerHTML +=
+`
+<div style="
+background:#1f2937;
+padding:6px;
+border-radius:6px;
+margin-bottom:4px;
+text-align:center;
+">
+${value.toLocaleString()}
+</div>
+`;
+
+const total =
+cashbackValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+cashbackTotal.innerText =
+"مجموع: " +
+total.toLocaleString();
+
+cashbackInput.value = "";
+
+cashbackSaveBtn.style.background =
+"#16a34a";
+
+cashbackSaveBtn.innerText =
+"ثبت کش بک";
+
+};
 
 if(cashbackBackBtn){
 
