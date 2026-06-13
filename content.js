@@ -717,6 +717,81 @@ document.getElementById("diamond-cashback-save");
 const cashbackResetBtn =
 document.getElementById("diamond-cashback-reset");
 
+
+cashbackResetBtn.onclick = ()=>{
+
+cashbackValues = [];
+
+cashbackList.innerHTML = "";
+
+cashbackTotal.innerText =
+"مجموع: 0";
+
+cashbackInput.value = "";
+
+localStorage.removeItem(
+"diamond_cashback"
+);
+
+localStorage.removeItem(
+"diamond_cashback_list"
+);
+
+cashbackSaveBtn.style.background =
+"#16a34a";
+
+cashbackSaveBtn.innerText =
+"ثبت کش بک";
+
+};
+
+const savedCashbackList =
+JSON.parse(
+localStorage.getItem(
+"diamond_cashback_list"
+) || "[]"
+);
+
+if(savedCashbackList.length){
+
+cashbackValues =
+savedCashbackList;
+
+savedCashbackList.forEach(value=>{
+
+cashbackList.innerHTML +=
+`
+<div style="
+background:#1f2937;
+padding:6px;
+border-radius:6px;
+margin-bottom:4px;
+text-align:center;
+">
+${value.toLocaleString()}
+</div>
+`;
+
+});
+
+const total =
+cashbackValues.reduce(
+(a,b)=>a+b,
+0
+);
+
+cashbackTotal.innerText =
+"مجموع: " +
+total.toLocaleString();
+
+cashbackSaveBtn.style.background =
+"#15803d";
+
+cashbackSaveBtn.innerText =
+"🟢 ثبت شد";
+
+}
+
 cashbackSaveBtn.onclick = ()=>{
 
 const total =
@@ -1230,6 +1305,33 @@ font-weight:bold;
 </button>
 
 `;
+
+setTimeout(()=>{
+
+const cashbackBtn =
+document.getElementById(
+"diamond-cashback-btn"
+);
+
+const savedCashback =
+localStorage.getItem(
+"diamond_cashback"
+);
+
+if(
+cashbackBtn &&
+savedCashback !== null
+){
+
+cashbackBtn.style.background =
+"#15803d";
+
+cashbackBtn.innerText =
+"🟢 کش بک ثبت شد";
+
+}
+
+},50);
 
 }
 
