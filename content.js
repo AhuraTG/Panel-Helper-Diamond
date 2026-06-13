@@ -307,6 +307,21 @@ showLossMenu();
 
 setTimeout(()=>{
 
+const systemBtn =
+document.getElementById("diamond-system-btn");
+
+if(systemBtn){
+
+systemBtn.onclick = ()=>{
+
+document.getElementById(
+"diamond-aff-name"
+).value = "0-system";
+
+};
+
+}
+
 const affBtn =
 document.getElementById("diamond-aff-btn");
 
@@ -316,6 +331,11 @@ affBtn.onclick = ()=>{
 
 const affName =
 document.getElementById("diamond-aff-name").value.trim();
+
+localStorage.setItem(
+"diamond_aff_name",
+affName
+);
 
 if(!affName){
 
@@ -423,6 +443,12 @@ return;
 localStorage.setItem(
 "diamond_total_deposit",
 totalDeposit
+);
+
+console.log(
+localStorage.getItem(
+"diamond_total_deposit"
+)
 );
 
 depositBtn.style.background =
@@ -1042,12 +1068,59 @@ localStorage.removeItem(
 "diamond_aff_name"
 );
 
+localStorage.removeItem(
+"diamond_cashback"
+);
+
+localStorage.removeItem(
+"diamond_cashback_list"
+);
+
+localStorage.removeItem(
+"diamond_total_deposit"
+);
+
+localStorage.removeItem(
+"diamond_total_withdraw"
+);
+
+localStorage.removeItem(
+"diamond_user_id"
+);
+
+localStorage.removeItem(
+"diamond_user_name"
+);
+
 document.getElementById(
 "diamond-aff-name"
 ).value = "";
 
 const affBtn =
 document.getElementById("diamond-aff-btn");
+
+const affInput =
+document.getElementById("diamond-aff-name");
+
+if(
+affInput &&
+affBtn
+){
+
+affInput.addEventListener(
+"input",
+()=>{
+
+affBtn.style.background =
+"#dc2626";
+
+affBtn.innerText =
+"ثبت افلیت";
+
+}
+);
+
+}
 
 if(affBtn){
 
@@ -1056,6 +1129,19 @@ affBtn.style.background =
 
 affBtn.innerText =
 "ثبت افلیت";
+
+}
+
+const depositBtn =
+document.getElementById("diamond-deposit-btn");
+
+if(depositBtn){
+
+depositBtn.style.background =
+"#dc2626";
+
+depositBtn.innerText =
+"🔴 ثبت مقدار واریزی";
 
 }
 
@@ -1074,6 +1160,19 @@ profileBtn.innerText =
 
 const withdrawBtn =
 document.getElementById("diamond-withdraw-btn");
+
+const cashbackBtn =
+document.getElementById("diamond-cashback-btn");
+
+if(cashbackBtn){
+
+cashbackBtn.style.background =
+"#dc2626";
+
+cashbackBtn.innerText =
+"🔴 کش بک دریافتی";
+
+}
 
 if(withdrawBtn){
 
@@ -1142,7 +1241,7 @@ margin-bottom:10px;
 <div style="
 display:flex;
 gap:6px;
-margin-bottom:10px;
+margin-bottom:8px;
 ">
 
 <input
@@ -1156,20 +1255,36 @@ border:none;
 ">
 
 <button
-id="diamond-aff-btn"
+id="diamond-system-btn"
 style="
-width:70px;
-background:#dc2626;
+width:80px;
+background:#2563eb;
 color:white;
 border:none;
 border-radius:6px;
 cursor:pointer;
 font-size:12px;
 ">
-ثبت افلیت
+افلیت سیستم
 </button>
 
 </div>
+
+<button
+id="diamond-aff-btn"
+style="
+width:100%;
+padding:10px;
+margin-bottom:8px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+">
+ثبت افلیت
+</button>
 
 <button
 id="diamond-profile-btn"
@@ -1313,6 +1428,41 @@ document.getElementById(
 "diamond-cashback-btn"
 );
 
+const affInput =
+document.getElementById(
+"diamond-aff-name"
+);
+
+const savedAff =
+localStorage.getItem(
+"diamond_aff_name"
+);
+
+if(
+affInput &&
+savedAff
+){
+
+affInput.value =
+savedAff;
+
+const affBtn =
+document.getElementById(
+"diamond-aff-btn"
+);
+
+if(affBtn){
+
+affBtn.style.background =
+"#16a34a";
+
+affBtn.innerText =
+"ثبت شد";
+
+}
+
+}
+
 const savedCashback =
 localStorage.getItem(
 "diamond_cashback"
@@ -1328,6 +1478,66 @@ cashbackBtn.style.background =
 
 cashbackBtn.innerText =
 "🟢 کش بک ثبت شد";
+
+}
+
+const profileBtn =
+document.getElementById(
+"diamond-profile-btn"
+);
+
+if(
+profileBtn &&
+localStorage.getItem(
+"diamond_user_id"
+)
+){
+
+profileBtn.style.background =
+"#16a34a";
+
+profileBtn.innerText =
+"🟢 پروفایل ثبت شد";
+
+}
+
+const depositBtn =
+document.getElementById(
+"diamond-deposit-btn"
+);
+
+if(
+depositBtn &&
+localStorage.getItem(
+"diamond_total_deposit"
+)
+){
+
+depositBtn.style.background =
+"#16a34a";
+
+depositBtn.innerText =
+"🟢 واریزی ثبت شد";
+
+}
+
+const withdrawBtn =
+document.getElementById(
+"diamond-withdraw-btn"
+);
+
+if(
+withdrawBtn &&
+localStorage.getItem(
+"diamond_total_withdraw"
+)
+){
+
+withdrawBtn.style.background =
+"#16a34a";
+
+withdrawBtn.innerText =
+"🟢 برداشت ثبت شد";
 
 }
 
