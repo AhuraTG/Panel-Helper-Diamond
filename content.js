@@ -186,6 +186,34 @@ cursor:pointer;
 
 setTimeout(()=>{
 
+document.getElementById(
+"diamond-panel-select"
+).value =
+localStorage.getItem(
+"diamond_panel"
+) || "JET BET";
+
+document.getElementById(
+"diamond-date-from"
+).value =
+localStorage.getItem(
+"diamond_date_from"
+) || "";
+
+document.getElementById(
+"diamond-date-to"
+).value =
+localStorage.getItem(
+"diamond_date_to"
+) || "";
+
+document.getElementById(
+"diamond-month"
+).value =
+localStorage.getItem(
+"diamond_month"
+) || "January";
+
 const saveBtn =
 document.getElementById("diamond-save-settings");
 
@@ -330,18 +358,20 @@ if(affBtn){
 affBtn.onclick = ()=>{
 
 const affName =
-document.getElementById("diamond-aff-name").value.trim();
-
-localStorage.setItem(
-"diamond_aff_name",
-affName
-);
+document.getElementById(
+"diamond-aff-name"
+).value.trim();
 
 if(!affName){
 
 return;
 
 }
+
+localStorage.setItem(
+"diamond_aff_name",
+affName
+);
 
 affBtn.style.background =
 "#16a34a";
@@ -443,12 +473,6 @@ return;
 localStorage.setItem(
 "diamond_total_deposit",
 totalDeposit
-);
-
-console.log(
-localStorage.getItem(
-"diamond_total_deposit"
-)
 );
 
 depositBtn.style.background =
@@ -883,7 +907,10 @@ parseInt(
 cashbackInput.value.replaceAll(",","")
 );
 
-if(isNaN(value)){
+if(
+isNaN(value) ||
+value <= 0
+){
 
 return;
 
@@ -1248,14 +1275,6 @@ localStorage.removeItem(
 "diamond_remaining_withdraw_list"
 );
 
-localStorage.removeItem(
-"diamond_manual_charge"
-);
-
-localStorage.removeItem(
-"diamond_manual_charge_list"
-);
-
 remainingSaveBtn.style.background =
 "#16a34a";
 
@@ -1310,7 +1329,10 @@ remainingInput.value.replaceAll(
 )
 );
 
-if(isNaN(value)){
+if(
+isNaN(value) ||
+value <= 0
+){
 
 return;
 
@@ -1698,7 +1720,10 @@ manualInput.value.replaceAll(
 )
 );
 
-if(isNaN(value)){
+if(
+isNaN(value) ||
+value <= 0
+){
 
 return;
 
@@ -1752,6 +1777,16 @@ document.getElementById(
 if(copyLossFormBtn){
 
 copyLossFormBtn.onclick = ()=>{
+
+if(
+document.getElementById(
+"diamond-loss-preview"
+)
+){
+
+return;
+
+}
 
 const userId =
 localStorage.getItem(
@@ -1897,8 +1932,10 @@ localStorage.getItem(
 );
 
 const bardasht =
-monthlyWithdraw -
-remainingWithdraw;
+Math.max(
+0,
+monthlyWithdraw - remainingWithdraw
+);
 
 const rawFinal =
 variz - bardasht;
@@ -1949,6 +1986,36 @@ Math.max(
 lossAmount - cashbackAmount
 );
 
+const formText = `Site          ${site}
+Aff name      ${affName}
+User          ${userId}
+user name     ${userName}
+Total Deposit ${totalDeposit}
+Total Withdraw ${totalWithdraw}
+system profit ${systemProfit}
+
+Date From     ${formatDate(dateFrom)}
+Date To       ${formatDate(dateTo)}
+Variz         ${variz.toLocaleString()}
+Bardasht      ${bardasht.toLocaleString()}
+Final         ${finalAmount.toLocaleString()}
+${
+finalAmount > 0
+? `%${lossPercent}      ${lossAmount.toLocaleString()}      درصد باخت`
+: "برداشت بیشتر از واریزی بوده"
+}
+${
+finalAmount <= 0
+?
+""
+:
+cashbackAmount >= lossAmount
+?
+`ماه ${persianMonth} 🌕      کش بک بیش از درصد باخت بوده`
+:
+`ماه ${persianMonth} 🌕      ${finalCashback.toLocaleString()}`
+}`;
+
 const previewBox =
 document.createElement("div");
 
@@ -1982,36 +2049,7 @@ width:100%;
 box-sizing:border-box;
 ">
 
-Site          ${site}
-Aff name      ${affName}
-User          ${userId}
-user name     ${userName}
-Total Deposit ${totalDeposit}
-Total Withdraw ${totalWithdraw}
-system profit ${systemProfit}
-
-Date From     ${formatDate(dateFrom)}
-Date To       ${formatDate(dateTo)}
-Variz         ${variz.toLocaleString()}
-Bardasht      ${bardasht.toLocaleString()}
-Final         ${finalAmount.toLocaleString()}
-${
-finalAmount > 0
-? `%${lossPercent}      ${lossAmount.toLocaleString()}      درصد باخت`
-: "برداشت بیشتر از واریزی بوده"
-}
-${
-finalAmount <= 0
-?
-""
-:
-cashbackAmount >= lossAmount
-?
-`ماه ${persianMonth} 🌕      کش بک بیش از درصد باخت بوده`
-:
-`ماه ${persianMonth} 🌕      ${finalCashback.toLocaleString()}`
-}
-
+${formText}
 
 </div>
 
@@ -2052,6 +2090,45 @@ zIndex:"99999999"
 document.body.appendChild(
 previewBox
 );
+
+navigator.clipboard
+.writeText(formText)
+.catch(()=>{
+
+console.log(
+"copy failed"
+);
+
+});
+
+const successBox =
+document.createElement("div");
+
+successBox.innerText =
+"فرم کپی شد";
+
+Object.assign(successBox.style,{
+position:"fixed",
+top:"15px",
+left:"50%",
+transform:"translateX(-50%)",
+background:"#16a34a",
+color:"#fff",
+padding:"10px 20px",
+borderRadius:"8px",
+fontWeight:"bold",
+zIndex:"999999999"
+});
+
+document.body.appendChild(
+successBox
+);
+
+setTimeout(()=>{
+
+successBox.remove();
+
+},2000);
 
 document.getElementById(
 "diamond-loss-preview-close"
@@ -2151,10 +2228,6 @@ systemProfit = value;
 }
 
 });
-
-console.log(
-document.querySelectorAll(".holder")
-);
 
 localStorage.setItem(
 "diamond_user_id",
@@ -2925,10 +2998,6 @@ removeDiamondButton();
 
 }
 
-chrome.storage.local.set({
-diamondEnabled:false
-});
-
 checkState();
 
-setInterval(checkState,1000);
+setInterval(checkState,5000);
