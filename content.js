@@ -1744,6 +1744,327 @@ manualSaveBtn.innerText =
 
 }
 
+const copyLossFormBtn =
+document.getElementById(
+"diamond-copy-loss-form-btn"
+);
+
+if(copyLossFormBtn){
+
+copyLossFormBtn.onclick = ()=>{
+
+const userId =
+localStorage.getItem(
+"diamond_user_id"
+) || "-";
+
+const userName =
+localStorage.getItem(
+"diamond_user_name"
+) || "-";
+
+const affName =
+localStorage.getItem(
+"diamond_aff_name"
+) || "-";
+
+const totalDeposit =
+localStorage.getItem(
+"diamond_profile_total_deposit"
+) || "-";
+
+const totalWithdraw =
+localStorage.getItem(
+"diamond_profile_total_withdraw"
+) || "-";
+
+const systemProfit =
+localStorage.getItem(
+"diamond_profile_system_profit"
+) || "-";
+
+let site =
+localStorage.getItem(
+"diamond_panel"
+) || "-";
+
+if(site === "JET BET"){
+
+site = "Jet";
+
+}
+
+if(site === "ACE BET"){
+
+site = "Ace";
+
+}
+
+const dateFrom =
+localStorage.getItem(
+"diamond_date_from"
+) || "-";
+
+const dateTo =
+localStorage.getItem(
+"diamond_date_to"
+) || "-";
+
+function formatDate(date){
+
+if(!date || date === "-"){
+
+return "-";
+
+}
+
+const parts =
+date.split("-");
+
+return (
+parts[2] +
+"/" +
+parts[1] +
+"/" +
+parts[0].slice(-2)
+);
+
+}
+
+const month =
+localStorage.getItem(
+"diamond_month"
+) || "-";
+
+const monthMap = {
+
+January:"ژانویه",
+February:"فوریه",
+March:"مارس",
+April:"آوریل",
+May:"می",
+June:"ژوئن",
+July:"جولای",
+August:"آگوست",
+September:"سپتامبر",
+October:"اکتبر",
+November:"نوامبر",
+December:"دسامبر"
+
+};
+
+const persianMonth =
+monthMap[month] || month;
+
+const monthlyDeposit =
+parseInt(
+(
+localStorage.getItem(
+"diamond_total_deposit"
+) || "0"
+).replaceAll(",","")
+);
+
+const manualCharge =
+parseInt(
+(
+localStorage.getItem(
+"diamond_manual_charge"
+) || "0"
+).replaceAll(",","")
+);
+
+const variz =
+monthlyDeposit +
+manualCharge;
+
+const monthlyWithdraw =
+parseInt(
+(
+localStorage.getItem(
+"diamond_total_withdraw"
+) || "0"
+).replaceAll(",","")
+);
+
+const remainingWithdraw =
+parseInt(
+(
+localStorage.getItem(
+"diamond_remaining_withdraw"
+) || "0"
+).replaceAll(",","")
+);
+
+const bardasht =
+monthlyWithdraw -
+remainingWithdraw;
+
+const rawFinal =
+variz - bardasht;
+
+const finalAmount =
+Math.max(0, rawFinal);
+
+let lossPercent = 5;
+
+if(
+variz >= 50000000 &&
+variz < 100000000
+){
+
+lossPercent = 10;
+
+}
+
+if(variz >= 100000000){
+
+lossPercent = 15;
+
+}
+
+let lossAmount = 0;
+
+if(finalAmount > 0){
+
+lossAmount = Math.floor(
+finalAmount *
+(lossPercent / 100)
+);
+
+}
+
+const cashbackAmount =
+parseInt(
+(
+localStorage.getItem(
+"diamond_cashback"
+) || "0"
+).replaceAll(",","")
+);
+
+const finalCashback =
+Math.max(
+0,
+lossAmount - cashbackAmount
+);
+
+const previewBox =
+document.createElement("div");
+
+previewBox.id =
+"diamond-loss-preview";
+
+previewBox.innerHTML = `
+
+<div style="
+background:#1f2937;
+padding:15px;
+border-radius:10px;
+width:380px;
+max-width:90vw;
+display:flex;
+flex-direction:column;
+gap:10px;
+">
+
+<div style="
+background:#111827;
+padding:15px;
+border-radius:8px;
+color:white;
+white-space:pre-wrap;
+margin-bottom:10px;
+line-height:1.8;
+font-size:14px;
+display:block;
+width:100%;
+box-sizing:border-box;
+">
+
+Site          ${site}
+Aff name      ${affName}
+User          ${userId}
+user name     ${userName}
+Total Deposit ${totalDeposit}
+Total Withdraw ${totalWithdraw}
+system profit ${systemProfit}
+
+Date From     ${formatDate(dateFrom)}
+Date To       ${formatDate(dateTo)}
+Variz         ${variz.toLocaleString()}
+Bardasht      ${bardasht.toLocaleString()}
+Final         ${finalAmount.toLocaleString()}
+${
+finalAmount > 0
+? `%${lossPercent}      ${lossAmount.toLocaleString()}      درصد باخت`
+: "برداشت بیشتر از واریزی بوده"
+}
+${
+finalAmount <= 0
+?
+""
+:
+cashbackAmount >= lossAmount
+?
+`ماه ${persianMonth} 🌕      کش بک بیش از درصد باخت بوده`
+:
+`ماه ${persianMonth} 🌕      ${finalCashback.toLocaleString()}`
+}
+
+
+</div>
+
+<button
+id="diamond-loss-preview-close"
+style="
+width:100%;
+padding:10px;
+background:#dc2626;
+color:white;
+border:none;
+border-radius:8px;
+font-weight:bold;
+">
+بستن
+</button>
+
+</div>
+
+`;
+
+Object.assign(
+previewBox.style,
+{
+position:"fixed",
+top:"0",
+left:"0",
+width:"100%",
+height:"100%",
+background:"rgba(0,0,0,.6)",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+zIndex:"99999999"
+}
+);
+
+document.body.appendChild(
+previewBox
+);
+
+document.getElementById(
+"diamond-loss-preview-close"
+).onclick = ()=>{
+
+previewBox.remove();
+
+};
+
+};
+
+}
+
 const profileBtn =
 document.getElementById("diamond-profile-btn");
 
@@ -1979,6 +2300,14 @@ localStorage.removeItem(
 
 localStorage.removeItem(
 "diamond_profile_system_profit"
+);
+
+localStorage.removeItem(
+"diamond_manual_charge"
+);
+
+localStorage.removeItem(
+"diamond_manual_charge_list"
 );
 
 document.getElementById(
@@ -2297,6 +2626,7 @@ font-weight:bold;
 </button>
 
 <button
+id="diamond-copy-loss-form-btn"
 style="
 width:100%;
 padding:10px;
